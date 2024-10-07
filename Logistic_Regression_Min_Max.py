@@ -48,15 +48,15 @@ class LRTrading:
         min_indices = argrelextrema(stock_data['Close'].values, np.less, order=5)[0]
 
         labels = np.full(len(stock_data), np.NaN)
-        labels[max_indices] = 1  # Local maximum (sell signal)
-        labels[min_indices] = 0   # Local minimum (buy signal)
+        labels[max_indices] = 1  # sell signal
+        labels[min_indices] = 0   # buy signal
 
         stock_data['Label'] = labels
         stock_data.dropna(subset=['Label'], inplace=True)
 
         return stock_data
 
-    # Function to calculate linear regression coefficients over a rolling window
+    # Function to calculate linear regression coefficients
     def calculate_regression(self, stock_data, days):
         reg_coef = []
         for i in range(len(stock_data)):
@@ -70,7 +70,7 @@ class LRTrading:
                 reg_coef.append(0)
         return reg_coef
 
-    # Train the logistic regression model
+    # Training LR model
     def train_model(self):
         x = self.main_df[['Normalized_Price', 'Volume', '3_day_reg', '5_day_reg', '10_day_reg', '20_day_reg']]
         y = self.main_df['Label'].values
@@ -128,7 +128,7 @@ class LRTrading:
         plt.legend()
         plt.show()
 
-# Example of running the model
+# Running the model (logic for running should be updated later)
 if True:
     lr_model = LRTrading(stock='SPY', start='2005-01-01', end='2020-01-01')
     test_data, buy_signal, sell_signal = lr_model.test_model(test_start='2020-01-01', test_end='2021-01-01')
